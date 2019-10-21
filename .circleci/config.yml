@@ -39,10 +39,10 @@ terraform_init: &terraform_init
 
 apply_job: &apply_job
   steps:
-    - *set_terraform_environment
-    - *terraform_init
+    - set_terraform_environment
+    - terraform_init
     - attach_workspace:
-        at: *working_directory
+        at: working_directory
     - run:
         name: terraform apply
         command: |
@@ -55,14 +55,12 @@ jobs:
   build:
     steps:
       - checkout
-      - *set_terraform_environment
+      - set_terraform_environment
 
   plan:
-    <<: *default_config
     steps:
-      - *restore_repo
-      - *set_terraform_environment
-      - *terraform_init
+      - set_terraform_environment
+      - terraform_init
       - run:
           name: terraform plan
           command: |
@@ -70,7 +68,7 @@ jobs:
             cd environments/$TERRAFORM_ENVIRONMENT
             terraform plan -out=../../terraform.plan
       - persist_to_workspace:
-          root: *working_directory
+          root: working_directory
           paths:
             - terraform.plan
 
